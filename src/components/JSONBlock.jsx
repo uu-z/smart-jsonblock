@@ -132,7 +132,7 @@ const processComponentData = (data, componentType) => {
   return data;
 }
 
-const JSONBlock = ({ data }) => {
+const JSONBlock = ({ data, layout = 'list', columns = 2 }) => {
   if (!data || typeof data !== 'object') {
     return <div>Invalid data provided</div>
   }
@@ -142,12 +142,36 @@ const JSONBlock = ({ data }) => {
     return <ArrayRenderer data={data} name="Array Data" />
   }
 
+  // Filter out _type field and other metadata fields
+  const entries = Object.entries(data).filter(([key]) => 
+    key !== '_type' && key !== '_layout' && key !== '_columns'
+  );
+
+  // Check if layout is specified in the data
+  const dataLayout = data._layout || layout;
+  const dataColumns = data._columns || columns;
+
+  // Grid layout styles
+  const gridStyles = {
+    display: 'grid',
+    gridTemplateColumns: `repeat(${dataColumns}, 1fr)`,
+    gap: '1rem',
+    gridAutoRows: 'minmax(100px, auto)'
+  };
+
+  // List layout styles
+  const listStyles = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem'
+  };
+
   return (
-    <div className="json-block">
-      {Object.entries(data).map(([key, value]) => {
-        // Skip rendering _type field
-        if (key === '_type') return null;
-        
+    <div 
+      className={`json-block json-block-${dataLayout}`}
+      style={dataLayout === 'grid' ? gridStyles : listStyles}
+    >
+      {entries.map(([key, value]) => {
         const Component = resolveComponent(value, key);
         
         // Determine component type
@@ -166,8 +190,22 @@ const JSONBlock = ({ data }) => {
         
         const processedData = processComponentData(value, componentType);
         
+        // Determine if this component should span multiple columns
+        const span = (value && typeof value === 'object' && !Array.isArray(value) && '_span' in value) 
+          ? value._span 
+          : 1;
+        
+        // Component wrapper styles
+        const wrapperStyles = {
+          gridColumn: dataLayout === 'grid' && span > 1 ? `span ${Math.min(span, dataColumns)}` : undefined,
+        };
+        
         return (
-          <div key={key} className="component-wrapper">
+          <div 
+            key={key} 
+            className={`component-wrapper component-type-${componentType || 'unknown'}`}
+            style={wrapperStyles}
+          >
             <Component data={processedData} name={key} />
           </div>
         )

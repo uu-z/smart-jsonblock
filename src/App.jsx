@@ -248,6 +248,84 @@ function App() {
     }
   ]
 
+  // Grid layout example
+  const gridLayoutExample = {
+    _layout: 'grid',  // Use grid layout
+    _columns: 3,      // 3 columns grid
+    
+    title: "Grid Layout Example",
+    description: "This example demonstrates the grid layout capability with column spanning",
+    
+    // Full width chart (spans 3 columns)
+    mainChart: {
+      _type: "chart",
+      _span: 3,  // Span all 3 columns
+      type: "bar",
+      data: [25, 40, 60, 35, 45, 30],
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      title: "Monthly Performance"
+    },
+    
+    // User cards in first row (each spans 1 column)
+    teamLead: {
+      _type: "userCard",
+      name: "Alex Johnson",
+      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+      role: "Team Lead"
+    },
+    
+    designer: {
+      _type: "userCard",
+      name: "Sarah Miller",
+      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+      role: "UX Designer"
+    },
+    
+    developer: {
+      _type: "userCard",
+      name: "David Chen",
+      avatar: "https://randomuser.me/api/portraits/men/22.jpg",
+      role: "Developer"
+    },
+    
+    // Progress bars (spans 2 columns)
+    projectProgress: {
+      _type: "progressBar",
+      _span: 2,  // Span 2 columns
+      current: 75,
+      total: 100,
+      label: "Project Completion"
+    },
+    
+    // Stats list (spans 1 column)
+    metrics: {
+      _type: "statsList",
+      data: [
+        { label: "Tasks", value: 24 },
+        { label: "Completed", value: 18 },
+        { label: "Pending", value: 6 }
+      ]
+    },
+    
+    // Location map (spans 2 columns)
+    officeLocation: {
+      _type: "locationMap",
+      _span: 2,  // Span 2 columns
+      lat: 37.7749,
+      lng: -122.4194,
+      name: "Headquarters"
+    },
+    
+    // Action buttons (spans 1 column)
+    actions: {
+      _type: "actionButtons",
+      data: [
+        { text: "View Details", type: "primary" },
+        { text: "Export", type: "secondary" }
+      ]
+    }
+  }
+
   // State for controlling which example set to display
   const [activeExample, setActiveExample] = useState('basic')
   const [showConventionInfo, setShowConventionInfo] = useState(false)
@@ -257,6 +335,7 @@ function App() {
     switch(activeExample) {
       case 'advanced': return advancedExamples
       case 'array': return arrayExamples
+      case 'grid': return gridLayoutExample
       case 'basic':
       default: return basicExamples
     }
@@ -305,6 +384,18 @@ function App() {
           Array Examples
         </button>
         <button 
+          onClick={() => setActiveExample('grid')}
+          style={{ 
+            backgroundColor: activeExample === 'grid' ? '#4a90e2' : '#333',
+            padding: '0.5rem 1rem',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer'
+          }}
+        >
+          Grid Layout
+        </button>
+        <button 
           onClick={() => setShowConventionInfo(!showConventionInfo)}
           style={{ 
             backgroundColor: showConventionInfo ? '#e24a4a' : '#333',
@@ -346,6 +437,25 @@ function App() {
             <li>Supports nested components and complex hierarchies</li>
             <li>Maintains backward compatibility with pattern matching</li>
           </ul>
+          
+          <h4>Grid Layout Support</h4>
+          <p>You can use grid layout for more flexible component arrangements:</p>
+          <pre>{`{
+  _layout: "grid",  // Use grid layout instead of list
+  _columns: 3,      // Number of columns in the grid
+  
+  mainChart: {
+    _type: "chart",
+    _span: 3,       // Span all 3 columns
+    ...
+  },
+  
+  sidebar: {
+    _type: "userCard",
+    _span: 1,       // Span 1 column
+    ...
+  }
+}`}</pre>
         </div>
       )}
       

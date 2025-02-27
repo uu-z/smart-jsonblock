@@ -1,0 +1,20 @@
+.code-example {
+  background-color: #1a1a1a;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+
+.code-example pre {
+  background-color: #2a2a2a;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.component-demo {
+  margin: 2rem 0;
+  padding: 1rem;
+  border: 1px dashed #666;
+  border-radius: 8px;
+}

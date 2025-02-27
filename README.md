@@ -1,5 +1,7 @@
 # smart-json-renderer
 
+![JSON Block Visualization](assets/image/image.png)
+
 To install dependencies:
 
 ```bash

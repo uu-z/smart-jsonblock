@@ -7,6 +7,7 @@ import ActionButtons from './patterns/ActionButtons'
 import ProgressBar from './patterns/ProgressBar'
 import LocationMap from './patterns/LocationMap'
 import GenericDisplay from './patterns/GenericDisplay'
+import ArrayRenderer from './patterns/ArrayRenderer'
 
 // Component registry with pattern matching functions
 const componentRegistry = [
@@ -22,7 +23,12 @@ const componentRegistry = [
     matcher: (key, data) => 
       Array.isArray(data) && 
       data.length > 0 && 
-      data.every(item => 'label' in item && 'value' in item),
+      data.every(item => 
+        typeof item === 'object' && 
+        item !== null && 
+        'label' in item && 
+        'value' in item
+      ),
     component: StatsList
   },
   {
@@ -38,14 +44,24 @@ const componentRegistry = [
     matcher: (key, data) => 
       Array.isArray(data) && 
       data.length > 0 && 
-      data.every(item => 'id' in item && 'name' in item),
+      data.every(item => 
+        typeof item === 'object' && 
+        item !== null && 
+        'id' in item && 
+        'name' in item
+      ),
     component: ItemTable
   },
   {
     matcher: (key, data) => 
       Array.isArray(data) && 
       data.length > 0 && 
-      data.every(item => 'text' in item && 'type' in item),
+      data.every(item => 
+        typeof item === 'object' && 
+        item !== null && 
+        'text' in item && 
+        'type' in item
+      ),
     component: ActionButtons
   },
   {
@@ -63,6 +79,11 @@ const componentRegistry = [
       'lat' in data && 
       'lng' in data,
     component: LocationMap
+  },
+  {
+    // Generic array handler for arrays that don't match other patterns
+    matcher: (key, data) => Array.isArray(data),
+    component: ArrayRenderer
   }
 ]
 
@@ -79,6 +100,11 @@ const findComponent = (key, data) => {
 const JSONBlock = ({ data }) => {
   if (!data || typeof data !== 'object') {
     return <div>Invalid data provided</div>
+  }
+
+  // Handle top-level array
+  if (Array.isArray(data)) {
+    return <ArrayRenderer data={data} name="Array Data" />
   }
 
   return (

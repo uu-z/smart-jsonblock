@@ -4,81 +4,6 @@ import JSONBlock from './components/JSONBlock'
 import './App.css'
 
 function App() {
-  // Basic examples with explicit type declarations
-  const basicExamples = {
-    title: "Smart JSON Renderer Demo",
-    description: "This demo shows how components are automatically matched based on data patterns or explicit type declarations",
-    
-    // Using explicit type declaration with _type
-    customUser: {
-      _type: "userCard",
-      name: "Jane Smith",
-      avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-      role: "Designer"
-    },
-    
-    // Original pattern-matched data (still works)
-    user: {
-      name: "John Doe",
-      avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-      role: "Developer"
-    },
-    
-    // Using explicit type declaration with data array
-    customStats: {
-      _type: "statsList",
-      data: [
-        { label: "Projects", value: 15 },
-        { label: "Tasks", value: 50 },
-        { label: "Completed", value: 35 }
-      ]
-    },
-    
-    // Original pattern-matched data
-    stats: [
-      { label: "Projects", value: 12 },
-      { label: "Tasks", value: 42 },
-      { label: "Completed", value: 30 }
-    ],
-    
-    chart: {
-      type: "bar",
-      data: [10, 25, 15, 30, 20, 40],
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"]
-    },
-    
-    items: [
-      { id: 1, name: "Item 1", price: 29.99, inStock: true },
-      { id: 2, name: "Item 2", price: 39.99, inStock: false },
-      { id: 3, name: "Item 3", price: 19.99, inStock: true }
-    ],
-    
-    actions: [
-      { text: "Save", type: "primary" },
-      { text: "Cancel", type: "secondary" }
-    ],
-    
-    // Using explicit type declaration
-    customProgress: {
-      _type: "progressBar",
-      current: 75,
-      total: 100,
-      label: "Custom Progress"
-    },
-    
-    // Original pattern-matched data
-    progress: {
-      current: 65,
-      total: 100
-    },
-    
-    location: {
-      lat: 37.7749,
-      lng: -122.4194,
-      name: "San Francisco"
-    }
-  }
-  
   // Advanced examples with complex nested structures
   const advancedExamples = {
     title: "Advanced JSON Rendering Examples",
@@ -248,407 +173,218 @@ function App() {
     }
   ]
 
-  // Grid layout example
-  const gridLayoutExample = {
-    _layout: 'grid',  // Use grid layout
-    _columns: 3,      // 3 columns grid
-    
-    title: "Grid Layout Example",
-    description: "This example demonstrates the grid layout capability with column spanning",
-    
-    // Full width chart (spans 3 columns)
-    mainChart: {
-      _type: "chart",
-      _span: 3,  // Span all 3 columns
-      type: "bar",
-      data: [25, 40, 60, 35, 45, 30],
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-      title: "Monthly Performance"
-    },
-    
-    // User cards in first row (each spans 1 column)
-    teamLead: {
-      _type: "userCard",
-      name: "Alex Johnson",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-      role: "Team Lead"
-    },
-    
-    designer: {
-      _type: "userCard",
-      name: "Sarah Miller",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-      role: "UX Designer"
-    },
-    
-    developer: {
-      _type: "userCard",
-      name: "David Chen",
-      avatar: "https://randomuser.me/api/portraits/men/22.jpg",
-      role: "Developer"
-    },
-    
-    // Progress bars (spans 2 columns)
-    projectProgress: {
-      _type: "progressBar",
-      _span: 2,  // Span 2 columns
-      current: 75,
-      total: 100,
-      label: "Project Completion"
-    },
-    
-    // Stats list (spans 1 column)
-    metrics: {
-      _type: "statsList",
-      data: [
-        { label: "Tasks", value: 24 },
-        { label: "Completed", value: 18 },
-        { label: "Pending", value: 6 }
-      ]
-    },
-    
-    // Location map (spans 2 columns)
-    officeLocation: {
-      _type: "locationMap",
-      _span: 2,  // Span 2 columns
-      lat: 37.7749,
-      lng: -122.4194,
-      name: "Headquarters"
-    },
-    
-    // Action buttons (spans 1 column)
-    actions: {
-      _type: "actionButtons",
-      data: [
-        { text: "View Details", type: "primary" },
-        { text: "Export", type: "secondary" }
-      ]
-    }
-  }
 
   // Advanced grid layout examples
   const gridLayoutExamples = {
     title: "Advanced Grid Layout Examples",
     description: "These examples demonstrate more complex grid layouts with CSS Grid",
     
-    // Basic grid layout with different sized items
-    basicGridLayout: {
-      _type: "gridLayout",
-      title: "Basic Grid Layout",
-      description: "A simple grid layout with items of different sizes",
+    // SmartLayout - 智能布局系统
+    smartLayoutExamples: {
+      _type: "smartLayout",
+      title: "智能布局系统",
+      description: "一个布局组件解决所有布局需求，自动检测最合适的布局类型",
       items: [
         {
-          content: "1x1 Grid Item",
-          colSpan: 1,
-          rowSpan: 1,
-          background: "#e9ecef"
+          title: "自动布局检测",
+          content: "SmartLayout 会根据内容结构自动选择最合适的布局类型，无需显式配置"
         },
         {
-          content: "2x1 Grid Item",
-          colSpan: 2,
-          rowSpan: 1,
-          background: "#dee2e6"
+          title: "内容感知",
+          content: "根据内容类型和数量动态调整布局，提供最佳展示效果"
         },
         {
-          content: "1x2 Grid Item",
-          colSpan: 1,
-          rowSpan: 2,
-          background: "#ced4da"
+          title: "上下文适应",
+          content: "根据设备、屏幕尺寸和用户偏好自动调整布局，实现真正的响应式设计"
         },
         {
-          content: "2x2 Grid Item",
-          colSpan: 2,
-          rowSpan: 2,
-          background: "#adb5bd"
+          title: "统一API",
+          content: "将多种布局模式整合为一个简单的API，减少学习成本"
         },
         {
-          content: "1x1 Grid Item",
-          colSpan: 1,
-          rowSpan: 1,
-          background: "#6c757d",
-          color: "#fff"
+          title: "渐进增强",
+          content: "基本配置即可工作，高级配置可选，满足不同复杂度的需求"
         },
         {
-          content: "3x1 Grid Item",
-          colSpan: 3,
-          rowSpan: 1,
-          background: "#495057",
-          color: "#fff"
+          title: "约定大于配置",
+          gradient: true,
+          content: "通过智能默认值和自动检测，减少90%的配置代码"
         }
       ],
       config: {
-        gap: "1rem",
-        rowHeight: "100px",
-        columns: 4,
-        responsive: true
+        debug: false
       }
     },
     
-    // Advanced grid layout with named areas
-    namedAreasLayout: {
-      _type: "advancedGridLayout",
-      title: "Named Grid Areas Layout",
-      description: "A grid layout using named grid areas for complex layouts",
+    
+    // SmartLayout - 区域布局示例
+    smartAreasExample: {
+      _type: "smartLayout",
+      title: "智能区域布局",
+      description: "自动检测为区域布局，根据区域名称组织内容",
       items: [
         {
           area: "header",
-          content: {
-            title: "Header",
-            description: "This is the header area spanning the full width"
-          },
-          background: "#007bff",
-          color: "#fff"
+          title: "页面头部",
+          content: "这是页面的头部区域，通常包含标题、导航等内容"
         },
         {
           area: "sidebar",
-          content: {
-            title: "Sidebar",
-            description: "Navigation sidebar"
-          },
-          background: "#6610f2",
-          color: "#fff"
+          title: "侧边栏",
+          content: "这是侧边栏区域，通常包含导航、筛选器等内容"
         },
         {
           area: "main",
-          content: {
-            title: "Main Content",
-            description: "The main content area"
-          },
-          background: "#e9ecef"
-        },
-        {
-          area: "right",
-          content: {
-            title: "Right Sidebar",
-            description: "Additional information"
-          },
-          background: "#fd7e14"
+          title: "主要内容",
+          content: "这是主要内容区域，展示核心信息"
         },
         {
           area: "footer",
-          content: {
-            title: "Footer",
-            description: "Footer spanning the full width"
-          },
-          background: "#20c997",
-          color: "#fff"
+          title: "页面底部",
+          content: "这是页面底部区域，通常包含版权信息、链接等"
         }
       ],
       config: {
-        rows: 3,
-        columns: 4,
-        gap: "1rem",
-        height: "500px",
-        areas: [
-          ["header", "header", "header", "header"],
-          ["sidebar", "main", "main", "right"],
-          ["footer", "footer", "footer", "footer"]
-        ]
-      }
-    },
-    
-    // Dashboard layout
-    dashboardExample: {
-      _type: "dashboardLayout",
-      title: "Interactive Dashboard",
-      description: "A responsive dashboard layout with widgets of different sizes",
-      widgets: [
-        {
-          title: "Revenue Overview",
-          size: "large",
-          priority: "high",
-          content: {
-            text: "Monthly revenue performance",
-            chart: "Bar Chart Placeholder"
-          },
-          actions: [
-            { label: "⋮" },
-            { label: "×" }
-          ],
-          footer: "Updated 5 minutes ago"
-        },
-        {
-          title: "Active Users",
-          size: "medium",
-          content: {
-            value: "1,245",
-            text: "Current active users on the platform"
-          },
-          headerBackground: "#4263eb",
-          color: "#333"
-        },
-        {
-          title: "Conversion Rate",
-          size: "medium",
-          content: {
-            value: "3.2%",
-            text: "Conversion rate this month"
-          },
-          headerBackground: "#40c057"
-        },
-        {
-          title: "Recent Orders",
-          size: "large",
-          content: "Table of recent orders would go here",
-          headerBackground: "#fd7e14"
-        },
-        {
-          title: "System Status",
-          size: "small",
-          content: {
-            text: "All systems operational",
-            value: "100%"
-          },
-          headerBackground: "#20c997"
-        },
-        {
-          title: "Notifications",
-          size: "small",
-          content: "5 new notifications",
-          headerBackground: "#fa5252"
-        },
-        {
-          title: "Storage Usage",
-          size: "medium",
-          content: {
-            value: "64%",
-            text: "Current storage usage"
-          },
-          headerBackground: "#7950f2"
-        },
-        {
-          title: "Weekly Report",
-          size: "xlarge",
-          content: {
-            text: "Weekly performance metrics",
-            chart: "Line Chart Placeholder"
-          },
-          headerBackground: "#1864ab",
-          color: "#333",
-          footer: "Generated on Monday, 10:00 AM"
-        }
-      ],
-      config: {
-        gap: "1.5rem",
-        minWidgetWidth: "250px"
-      }
-    },
-    
-    // New Unified Layout Example
-    unifiedLayoutExample: {
-      _type: "unifiedLayout",
-      title: "统一布局系统",
-      description: "简化的布局系统，自动检测布局类型，减少配置复杂度",
-      items: [
-        {
-          content: {
-            title: "自动检测布局类型",
-            description: "根据数据结构自动选择最合适的布局类型",
-            value: "智能布局"
-          },
-          colSpan: 2,
-          rowSpan: 1
-        },
-        {
-          content: {
-            title: "响应式设计",
-            description: "自动适应不同屏幕尺寸"
-          },
-          colSpan: 1,
-          rowSpan: 1
-        },
-        {
-          content: {
-            title: "主题支持",
-            description: "支持亮色、暗色和多彩主题",
-            value: "3种主题"
-          },
-          colSpan: 1,
-          rowSpan: 1
-        },
-        {
-          content: {
-            title: "约定大于配置",
-            description: "减少不必要的配置，专注于内容"
-          },
-          colSpan: 2,
-          rowSpan: 1
-        }
-      ],
-      config: {
-        // Minimal configuration needed - most settings are auto-detected
-        theme: "colorful"
-      }
-    },
-    
-    // Unified Layout with Areas
-    unifiedAreasExample: {
-      _type: "unifiedLayout",
-      title: "命名区域布局",
-      description: "使用命名区域创建复杂布局，无需复杂配置",
-      items: [
-        {
-          area: "header",
-          content: "页面头部"
-        },
-        {
-          area: "nav",
-          content: "导航菜单"
-        },
-        {
-          area: "main",
-          content: "主要内容区域"
-        },
-        {
-          area: "sidebar",
-          content: "侧边栏"
-        },
-        {
-          area: "footer",
-          content: "页面底部"
-        }
-      ],
-      config: {
-        // Layout type will be auto-detected as 'areas' because items have 'area' property
         areas: [
           ["header", "header", "header"],
-          ["nav", "main", "sidebar"],
+          ["sidebar", "main", "main"],
           ["footer", "footer", "footer"]
-        ]
+        ],
+        gap: "1rem"
       }
     },
     
-    // Unified Dashboard Layout
-    unifiedDashboardExample: {
-      _type: "unifiedLayout",
-      title: "仪表盘布局",
-      description: "简化的仪表盘布局，专注于内容展示",
+    // SmartLayout - 时间线布局示例
+    smartTimelineExample: {
+      _type: "smartLayout",
+      title: "智能时间线布局",
+      description: "自动检测为时间线布局，展示时间序列数据",
       items: [
         {
-          title: "销售概览",
+          title: "项目启动",
+          date: "2023-01-15",
+          content: "项目正式启动，确定了核心功能和开发计划"
+        },
+        {
+          title: "设计阶段",
+          date: "2023-02-20",
+          content: "完成产品设计和用户界面设计，准备进入开发阶段"
+        },
+        {
+          title: "开发阶段",
+          date: "2023-03-10",
+          content: "开始核心功能开发，团队协作进行前后端实现"
+        },
+        {
+          title: "测试阶段",
+          date: "2023-04-05",
+          content: "进行功能测试和性能优化，修复发现的问题"
+        },
+        {
+          title: "发布上线",
+          date: "2023-05-01",
+          content: "产品正式发布上线，开始收集用户反馈"
+        }
+      ],
+      config: {
+        shadow: "large"
+      }
+    },
+    
+    // SmartLayout - 画廊布局示例
+    smartGalleryExample: {
+      _type: "smartLayout",
+      title: "智能画廊布局",
+      description: "自动检测为画廊布局，优化图片展示",
+      items: [
+        {
+          title: "自然风景",
+          content: {
+            image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+            caption: "壮丽的山川"
+          }
+        },
+        {
+          title: "城市风光",
+          content: {
+            image: "https://images.unsplash.com/photo-1514565131-fce0801e5785?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+            caption: "繁华的都市"
+          }
+        },
+        {
+          title: "海洋世界",
+          content: {
+            image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+            caption: "宁静的海滩"
+          }
+        },
+        {
+          title: "动物王国",
+          content: {
+            image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+            caption: "可爱的动物"
+          }
+        },
+        {
+          title: "植物世界",
+          content: {
+            image: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+            caption: "绚丽的花朵"
+          }
+        },
+        {
+          title: "美食佳肴",
+          content: {
+            image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+            caption: "美味的食物"
+          }
+        }
+      ],
+      config: {
+        columns: 3,
+        aspectRatio: "4/3",
+        gap: "0.5rem"
+      }
+    },
+    
+    // SmartLayout - 仪表盘布局示例
+    smartDashboardExample: {
+      _type: "smartLayout",
+      title: "智能仪表盘布局",
+      description: "自动检测为仪表盘布局，优化数据展示",
+      items: [
+        {
+          title: "总销售额",
           size: "large",
           gradient: true,
           content: {
-            value: "¥128,430",
-            description: "本月销售额"
+            value: "¥1,234,567",
+            description: "同比增长 12.5%"
           }
         },
         {
           title: "用户数量",
           size: "medium",
-          gradient: "linear-gradient(135deg, #4facfe, #00f2fe)",
           content: {
-            value: "8,240",
+            value: "87,432",
             description: "活跃用户"
           }
         },
         {
           title: "订单数量",
           size: "medium",
+          content: {
+            value: "6,789",
+            description: "本月订单"
+          }
+        },
+        {
+          title: "客户满意度",
+          size: "small",
           gradient: "linear-gradient(135deg, #43e97b, #38f9d7)",
           content: {
-            value: "1,024",
-            description: "本周订单"
+            value: "4.8/5.0",
+            description: "基于 1,234 条评价"
           }
         },
         {
@@ -657,18 +393,22 @@ function App() {
           gradient: "linear-gradient(135deg, #fa709a, #fee140)",
           content: {
             value: "正常",
-            description: "所有系统运行正常"
-          },
-          footer: "最后更新: 10分钟前"
+            description: "所有服务运行正常"
+          }
         }
-      ]
+      ],
+      config: {
+        glass: true,
+        shadow: "large",
+        rounded: "large"
+      }
     },
     
     // 添加一个新的示例 - 极简配置，智能默认值
     minimalConfigExample: {
-      _type: "unifiedLayout",
-      title: "极简配置示例",
-      description: "约定大于配置，减少认知负担",
+      _type: "smartLayout",
+      title: "最小配置示例",
+      description: "使用智能默认值，只需提供必要数据",
       config: {
         glass: true,
         texture: true
@@ -692,9 +432,9 @@ function App() {
     
     // 添加一个新的示例 - 智能卡片示例
     smartCardExamples: {
-      _type: "unifiedLayout",
-      title: "智能卡片示例",
-      description: "约定大于配置的智能卡片，根据数据结构自动选择最合适的展示方式",
+      _type: "smartLayout",
+      title: "约定优于配置示例",
+      description: "通过数据结构自动推断布局类型和配置",
       config: {
         glass: true
       },
@@ -768,11 +508,60 @@ function App() {
           }
         }
       ]
+    },
+    
+    // 新增：约定大于配置的极简示例
+    conventionOverConfigExample: {
+      _type: "smartLayout",
+      title: "约定大于配置的极简示例",
+      description: "只需提供数据，系统自动推断最佳布局",
+      items: [
+        // 系统会自动检测为仪表盘项目
+        {
+          title: "销售额",
+          content: { value: "¥1,234,567" }
+        },
+        // 系统会自动检测为图表项目
+        {
+          title: "趋势图",
+          content: {
+            type: "line",
+            data: [10, 25, 30, 45, 60, 75]
+          }
+        },
+        // 系统会自动检测为图片项目
+        {
+          title: "产品展示",
+          content: {
+            image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3"
+          }
+        }
+      ]
+      // 无需任何配置，系统会自动推断：
+      // 1. 布局类型（网格）
+      // 2. 列数（基于屏幕尺寸和项目数量）
+      // 3. 间距（基于项目数量）
+      // 4. 主题（基于系统偏好）
+      // 5. 视觉效果（基于内容类型）
+    },
+    
+    // 新增：数据驱动的布局示例
+    dataFirstExample: {
+      _type: "smartLayout",
+      title: "数据驱动布局",
+      description: "系统根据数据结构自动推断最佳展示方式",
+      items: [
+        // 步骤1、2、3 - 系统会自动检测为流程布局
+        { title: "步骤 1", content: "定义问题" },
+        { title: "步骤 2", content: "分析数据" },
+        { title: "步骤 3", content: "得出结论" }
+      ]
+      // 系统会自动检测为流程布局，并应用适当的视觉样式
     }
   };
 
   // State for controlling which example set to display
-  const [currentExample, setCurrentExample] = useState('basic')
+  const [currentExample, setCurrentExample] = useState('nested')
   const [showConventionInfo, setShowConventionInfo] = useState(false)
   const [darkMode, setDarkMode] = useState(false)
 
@@ -790,18 +579,8 @@ function App() {
     switch(currentExample) {
       case 'nested': return advancedExamples
       case 'array': return arrayExamples
-      case 'grid': return gridLayoutExamples
-      case 'unified': return {
-        title: "统一布局系统示例",
-        description: "简化的布局系统，自动检测布局类型，减少配置复杂度",
-        unifiedGrid: gridLayoutExamples.unifiedLayoutExample,
-        unifiedAreas: gridLayoutExamples.unifiedAreasExample,
-        unifiedDashboard: gridLayoutExamples.unifiedDashboardExample,
-        minimalConfig: gridLayoutExamples.minimalConfigExample,
-        smartCards: gridLayoutExamples.smartCardExamples
-      }
-      case 'basic':
-      default: return basicExamples
+      case 'smart': return gridLayoutExamples
+      default: return advancedExamples
     }
   }
 
@@ -821,12 +600,6 @@ function App() {
       
       <div className="flex flex-wrap gap-2 mb-4">
         <button 
-          onClick={() => setCurrentExample('basic')}
-          className={`btn ${currentExample === 'basic' ? 'btn-primary' : ''}`}
-        >
-          基础示例
-        </button>
-        <button 
           onClick={() => setCurrentExample('nested')}
           className={`btn ${currentExample === 'nested' ? 'btn-primary' : ''}`}
         >
@@ -839,16 +612,16 @@ function App() {
           数组示例
         </button>
         <button 
-          onClick={() => setCurrentExample('grid')}
-          className={`btn ${currentExample === 'grid' ? 'btn-primary' : ''}`}
+          onClick={() => setCurrentExample('smart')}
+          className={`btn ${currentExample === 'smart' ? 'btn-primary' : ''}`}
         >
-          网格布局示例
+          智能布局系统
         </button>
         <button 
-          onClick={() => setCurrentExample('unified')}
-          className={`btn ${currentExample === 'unified' ? 'btn-primary' : ''}`}
+          onClick={() => setCurrentExample('convention')}
+          className={`btn ${currentExample === 'convention' ? 'btn-primary' : ''} btn-accent`}
         >
-          统一布局系统
+          约定大于配置
         </button>
         <button 
           onClick={() => setShowConventionInfo(!showConventionInfo)}
@@ -867,7 +640,58 @@ function App() {
             <li><strong>提高开发效率</strong> - 更少的代码，更快的开发速度</li>
             <li><strong>保持灵活性</strong> - 需要时仍可进行细粒度控制</li>
           </ul>
-          <p className="text-muted-foreground">这种设计理念让我们能够用更少的代码实现更丰富的功能，同时保持代码的可维护性。</p>
+          <p className="text-muted-foreground mb-4">这种设计理念让我们能够用更少的代码实现更丰富的功能，同时保持代码的可维护性。</p>
+          
+          <h3 className="text-lg font-bold mb-2">实现方式：</h3>
+          <ul className="list-disc pl-6 space-y-2 mb-4">
+            <li><strong>智能默认值</strong> - 每个配置项都有经过精心设计的默认值，适用于大多数场景</li>
+            <li><strong>自动类型检测</strong> - 根据数据结构自动推断最合适的组件类型</li>
+            <li><strong>内容感知</strong> - 分析内容特征，自动选择最佳展示方式</li>
+            <li><strong>上下文适应</strong> - 根据设备、屏幕尺寸和用户偏好自动调整</li>
+            <li><strong>渐进增强</strong> - 基本配置即可工作，高级配置可选</li>
+          </ul>
+          
+          <div className="bg-card p-4 rounded-lg border border-border mt-4">
+            <h4 className="font-semibold mb-2">代码示例对比：</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h5 className="text-sm font-medium mb-1">传统配置方式：</h5>
+                <pre className="bg-muted p-3 rounded text-xs font-mono overflow-auto">{`{
+  type: "grid",
+  columns: 3,
+  gap: "1rem",
+  padding: "1rem",
+  items: [
+    { 
+      title: "项目1",
+      content: "内容1",
+      colSpan: 1,
+      rowSpan: 1
+    },
+    // 更多项目...
+  ],
+  theme: "light",
+  shadow: "medium",
+  rounded: "medium",
+  animation: "subtle",
+  // 更多配置...
+}`}</pre>
+              </div>
+              <div>
+                <h5 className="text-sm font-medium mb-1">约定大于配置：</h5>
+                <pre className="bg-muted p-3 rounded text-xs font-mono overflow-auto">{`{
+  items: [
+    { 
+      title: "项目1",
+      content: "内容1"
+    },
+    // 更多项目...
+  ]
+  // 其他配置自动推断
+}`}</pre>
+              </div>
+            </div>
+          </div>
         </div>
       )}
       
@@ -890,7 +714,7 @@ function App() {
         <h4 className="text-md font-semibold mb-2">约定大于配置的示例：</h4>
         <pre className="bg-card p-4 rounded mb-2 text-sm font-mono">{`// 极简配置，系统会自动检测布局类型
 {
-  _type: "unifiedLayout",
+  _type: "smartLayout",
   title: "仪表盘",
   items: [
     { title: "销售额", content: { value: "¥128,430" } },

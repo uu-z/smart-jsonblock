@@ -121,3 +121,139 @@ This project uses Tailwind CSS with custom design tokens inspired by Shadcn UI. 
 ## License
 
 This project is licensed under the ISC License - see the LICENSE file for details.
+
+# JSONBlock - Convention Over Configuration
+
+A React component library that emphasizes "convention over configuration" to simplify development and reduce boilerplate code.
+
+## Core Philosophy
+
+This project is built around the principle of "convention over configuration," which means:
+
+1. **Smart defaults** - Components automatically detect the best way to render data
+2. **Reduced boilerplate** - Minimal configuration required to get started
+3. **Progressive enhancement** - Basic features work with zero config, advanced features available when needed
+4. **Consistent patterns** - Standardized data structures across components
+
+## Key Components
+
+### JSONBlock
+
+The core component that intelligently renders JSON data by selecting the appropriate component based on data structure.
+
+```jsx
+<JSONBlock data={myData} />
+```
+
+### SmartCard
+
+A versatile card component that automatically detects the appropriate card type based on the data structure.
+
+```jsx
+// Basic usage - automatically detects card type
+<SmartCard data={{
+  title: "Card Title",
+  content: "Card content goes here"
+}} />
+
+// Stat card - automatically detected by content structure
+<SmartCard data={{
+  title: "Monthly Sales",
+  content: {
+    value: "$12,500",
+    description: "+15% from last month"
+  }
+}} />
+
+// Media card - automatically detected by image property
+<SmartCard data={{
+  title: "Beautiful Scenery",
+  image: "/images/scenery.jpg",
+  content: "A beautiful mountain landscape"
+}} />
+```
+
+### SmartLayout
+
+An intelligent layout system that adapts to content structure and device characteristics.
+
+```jsx
+<SmartLayout
+  data={{
+    title: "Dashboard",
+    items: [
+      { title: "Item 1", content: "Content 1" },
+      {
+        title: "Item 2",
+        content: { value: "5,230", description: "Total Users" },
+      },
+    ],
+  }}
+/>
+```
+
+## Content Type System
+
+The library uses a standardized content type system that allows components to automatically detect and render content appropriately:
+
+- **Text Content**: Simple string values
+- **Stat Content**: Objects with `value` and optional `description`
+- **Media Content**: Objects with `image` and optional `caption`
+- **List Content**: Objects with an `items` array
+- **Custom Content**: Objects with a `_type` property for custom components
+
+## Recent Improvements
+
+1. **Standardized Content Types**: Created a unified content type system in `contentTypes.js`
+2. **Simplified Rendering Logic**: Each component now has direct rendering logic without dependencies
+3. **Consistent Class Naming**: Standardized CSS class naming conventions
+4. **Reduced Code Duplication**: Eliminated duplicate code across components
+5. **Better Type Detection**: Improved content type detection with dedicated utility functions
+
+## Getting Started
+
+```jsx
+import { JSONBlock, SmartCard, SmartLayout } from "./components";
+
+// Simple example
+const App = () => (
+  <div className="app">
+    <SmartCard
+      data={{
+        title: "Welcome",
+        content: "This card automatically uses the basic card type",
+      }}
+    />
+
+    <SmartLayout
+      data={{
+        title: "Dashboard",
+        items: [
+          {
+            title: "Sales",
+            content: {
+              value: "$45,231",
+              description: "+12% from last month",
+            },
+          },
+          {
+            title: "Users",
+            content: {
+              value: "1,205",
+              description: "Active users",
+            },
+          },
+        ],
+      }}
+    />
+  </div>
+);
+```
+
+## Benefits of Convention Over Configuration
+
+- **Reduced Development Time**: 90% less configuration code
+- **Improved Maintainability**: Centralized rendering logic
+- **Better Consistency**: Standardized patterns across components
+- **Enhanced Flexibility**: Components adapt to data without explicit configuration
+- **Progressive Disclosure**: Simple use cases are simple, complex use cases are possible

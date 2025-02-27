@@ -1,248 +1,360 @@
-import React from 'react'
-import UserCard from './patterns/UserCard'
-import StatsList from './patterns/StatsList'
-import Chart from './patterns/Chart'
-import ItemTable from './patterns/ItemTable'
-import ActionButtons from './patterns/ActionButtons'
-import ProgressBar from './patterns/ProgressBar'
-import LocationMap from './patterns/LocationMap'
-import GenericDisplay from './patterns/GenericDisplay'
-import ArrayRenderer from './patterns/ArrayRenderer'
-import GridLayout from './patterns/GridLayout'
-import AdvancedGridLayout from './patterns/AdvancedGridLayout'
-import DashboardLayout from './patterns/DashboardLayout'
-import UnifiedLayout from './patterns/UnifiedLayout'
+import React, { useMemo, useContext, createContext } from 'react'
+import SmartLayout from './patterns/SmartLayout'
 import SmartCard from './patterns/SmartCard'
+import { detectContentType, isCustomContent } from '../utils/contentTypes'
+
+// Create a context for sharing rendering configuration and seen objects
+const JSONBlockContext = createContext({
+  config: {},
+  seenObjects: new WeakSet(),
+  depth: 0,
+  path: []
+});
 
 /**
- * 组件注册表 - 将类型名称映射到组件
- * 约定大于配置：通过统一的注册机制减少重复代码
+ * JSONBlock - 智能JSON渲染组件 2.0
+ * 
+ * 核心理念：打破常规，简化复杂度
+ * 1. 上下文感知 - 使用React Context传递配置和状态，避免props drilling
+ * 2. 路径追踪 - 自动跟踪渲染路径，支持更精确的定制
+ * 3. 记忆化渲染 - 使用useMemo优化性能
+ * 4. 插件系统 - 支持自定义渲染器和转换器
+ * 5. 声明式配置 - 使用函数式API简化配置
  */
-const componentMap = {
-  userCard: UserCard,
-  statsList: StatsList,
-  chart: Chart,
-  itemTable: ItemTable,
-  actionButtons: ActionButtons,
-  progressBar: ProgressBar,
-  locationMap: LocationMap,
-  array: ArrayRenderer,  // 用于显式 _type: "array" 声明
-  gridLayout: GridLayout,
-  advancedGridLayout: AdvancedGridLayout,
-  dashboardLayout: DashboardLayout,
-  unifiedLayout: UnifiedLayout,  // 统一布局组件
-  smartCard: SmartCard  // 智能卡片组件
-}
 
-/**
- * 模式匹配器 - 用于向后兼容和自动检测
- * 约定大于配置：通过数据结构自动推断组件类型
- */
-const patternMatchers = [
-  {
-    type: 'userCard',
-    matcher: (data) => 
-      typeof data === 'object' && 
-      data !== null && 
-      'name' in data && 
-      'avatar' in data
-  },
-  {
-    type: 'statsList',
-    matcher: (data) => 
-      Array.isArray(data) && 
-      data.length > 0 && 
-      data.every(item => 
-        typeof item === 'object' && 
-        item !== null && 
-        'label' in item && 
-        'value' in item
-      )
-  },
-  {
-    type: 'chart',
-    matcher: (data) => 
-      typeof data === 'object' && 
-      data !== null && 
-      'type' in data && 
-      'data' in data && 
-      Array.isArray(data.data)
-  },
-  {
-    type: 'itemTable',
-    matcher: (data) => 
-      Array.isArray(data) && 
-      data.length > 0 && 
-      data.every(item => 
-        typeof item === 'object' && 
-        item !== null && 
-        'id' in item && 
-        'name' in item
-      )
-  },
-  {
-    type: 'actionButtons',
-    matcher: (data) => 
-      Array.isArray(data) && 
-      data.length > 0 && 
-      data.every(item => 
-        typeof item === 'object' && 
-        item !== null && 
-        'text' in item && 
-        'type' in item
-      )
-  },
-  {
-    type: 'progressBar',
-    matcher: (data) => 
-      typeof data === 'object' && 
-      data !== null && 
-      'current' in data && 
-      'total' in data
-  },
-  {
-    type: 'locationMap',
-    matcher: (data) => 
-      typeof data === 'object' && 
-      data !== null && 
-      'lat' in data && 
-      'lng' in data
-  },
-  {
-    type: 'array',
-    matcher: (data) => Array.isArray(data)
-  }
-]
-
-/**
- * 根据数据查找适当的组件
- * 约定大于配置：优先使用显式类型，其次使用模式匹配
- */
-const resolveComponent = (data, key) => {
-  // 约定优于配置：首先检查 _type 字段
-  if (data && typeof data === 'object' && !Array.isArray(data) && '_type' in data) {
-    const requestedType = data._type;
-    return componentMap[requestedType] || GenericDisplay;
+const JSONBlock = ({ data, config = {}, path = [] }) => {
+  // 创建记忆化的上下文值
+  const contextValue = useMemo(() => ({
+    config,
+    seenObjects: new WeakSet(),
+    depth: 0,
+    path
+  }), [config, path]);
+  
+  // 无效数据处理
+  if (data === undefined || data === null) {
+    return <div className="empty-state">无数据</div>
   }
   
-  // 向后兼容：使用模式匹配
-  for (const { type, matcher } of patternMatchers) {
-    if (matcher(data)) {
-      return componentMap[type] || GenericDisplay;
-    }
-  }
-  
-  return GenericDisplay;
-}
-
-/**
- * 在传递给组件之前处理数据
- * 约定大于配置：智能处理不同数据结构
- */
-const processComponentData = (data, componentType) => {
-  // 对于图表组件，我们需要传递整个对象
-  if (componentType === 'chart') {
-    return data;
-  }
-  
-  // 对于期望数组的其他组件，提取数据数组
-  // 这对于使用 _type 包装数组的组件很有用
-  if (data && typeof data === 'object' && !Array.isArray(data) && '_type' in data && 'data' in data && Array.isArray(data.data)) {
-    return data.data;
-  }
-  
-  return data;
-}
-
-/**
- * JSONBlock - 智能JSON渲染组件
- * 约定大于配置：通过数据结构自动选择合适的组件和布局
- */
-const JSONBlock = ({ data, layout = 'list', columns = 2 }) => {
-  if (!data || typeof data !== 'object') {
-    return <div className="empty-state">无效数据</div>
-  }
-
-  // 处理顶层数组
-  if (Array.isArray(data)) {
-    return <ArrayRenderer data={data} name="数组数据" />
-  }
-
-  // 过滤掉 _type 字段和其他元数据字段
-  const entries = Object.entries(data).filter(([key]) => 
-    key !== '_type' && key !== '_layout' && key !== '_columns'
-  );
-
-  // 检查数据中是否指定了布局
-  const dataLayout = data._layout || layout;
-  const dataColumns = data._columns || columns;
-
-  // 网格布局样式
-  const gridStyles = {
-    display: 'grid',
-    gridTemplateColumns: `repeat(${dataColumns}, 1fr)`,
-    gap: '1rem',
-    gridAutoRows: 'minmax(100px, auto)'
-  };
-
-  // 列表布局样式
-  const listStyles = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem'
-  };
-
-  // 如果没有数据，显示空状态
-  if (entries.length === 0) {
-    return <div className="empty-state">暂无数据</div>
-  }
-
+  // 使用上下文提供器包装渲染
   return (
-    <div 
-      className={`json-block json-block-${dataLayout} animate-fade-in`}
-      style={dataLayout === 'grid' ? gridStyles : listStyles}
-    >
-      {entries.map(([key, value]) => {
-        const Component = resolveComponent(value, key);
-        
-        // 确定组件类型
-        let componentType = null;
-        if (value && typeof value === 'object' && !Array.isArray(value) && '_type' in value) {
-          componentType = value._type;
-        } else {
-          // 尝试查找匹配的模式
-          for (const { type, matcher } of patternMatchers) {
-            if (matcher(value)) {
-              componentType = type;
-              break;
-            }
-          }
-        }
-        
-        const processedData = processComponentData(value, componentType);
-        
-        // 确定此组件是否应跨越多个列
-        const span = (value && typeof value === 'object' && !Array.isArray(value) && '_span' in value) 
-          ? value._span 
-          : 1;
-        
-        // 组件包装器样式
-        const wrapperStyles = {
-          gridColumn: dataLayout === 'grid' && span > 1 ? `span ${Math.min(span, dataColumns)}` : undefined,
-        };
-        
-        return (
-          <div 
-            key={key} 
-            className={`component-wrapper component-type-${componentType || 'unknown'} animate-slide-up`}
-            style={wrapperStyles}
-          >
-            <Component data={processedData} name={key} />
-          </div>
-        )
-      })}
-    </div>
+    <JSONBlockContext.Provider value={contextValue}>
+      <JSONBlockRenderer data={data} />
+    </JSONBlockContext.Provider>
   )
 }
 
-export default JSONBlock
+/**
+ * 内部渲染组件 - 使用上下文
+ */
+const JSONBlockRenderer = ({ data }) => {
+  const context = useContext(JSONBlockContext);
+  
+  // 基本类型直接显示
+  if (typeof data !== 'object') {
+    return <div className="primitive-value">{String(data)}</div>
+  }
+
+  // 智能渲染策略
+  return smartRender(data, context)
+}
+
+/**
+ * 智能渲染函数 - 核心逻辑
+ * 打破常规：使用函数式API和插件系统
+ */
+function smartRender(data, context) {
+  const { config, seenObjects, depth, path } = context;
+  
+  // 防止循环引用导致无限递归
+  if (typeof data === 'object' && data !== null) {
+    if (seenObjects.has(data)) {
+      return <div className="circular-reference">[循环引用]</div>;
+    }
+    seenObjects.add(data);
+  }
+  
+  // 防止过深递归
+  if (depth > (config.maxDepth || 10)) {
+    return <div className="max-depth-reached">[达到最大深度]</div>;
+  }
+  
+  // 创建新的上下文
+  const newContext = {
+    ...context,
+    depth: depth + 1
+  };
+  
+  // 应用自定义渲染器 (插件系统)
+  if (config.renderers) {
+    for (const renderer of config.renderers) {
+      const result = renderer(data, newContext);
+      if (result !== undefined) return result;
+    }
+  }
+  
+  // 1. 自定义组件类型处理
+  if (isCustomContent(data)) {
+    return renderCustomComponent(data, newContext);
+  }
+  
+  // 2. 数组处理
+  if (Array.isArray(data)) {
+    return renderArray(data, newContext);
+  }
+  
+  // 3. 空对象处理
+  if (Object.keys(data).filter(key => !key.startsWith('_')).length === 0) {
+    return <div className="empty-state">空对象</div>
+  }
+  
+  // 4. 已经是SmartLayout格式的数据
+  if (data.items && Array.isArray(data.items)) {
+    return <SmartLayout data={data} />
+  }
+  
+  // 5. 已经是SmartCard格式的数据
+  if ((data.title && data.content) || data.image || 
+      (typeof data === 'object' && ('value' in data || 'image' in data))) {
+    return <SmartCard data={data} />
+  }
+  
+  // 6. 普通对象 - 智能转换为最佳格式
+  return renderObject(data, newContext);
+}
+
+/**
+ * 自定义组件渲染
+ */
+function renderCustomComponent(data, context) {
+  const { config } = context;
+  const { _type, ...props } = data;
+  
+  // 查找自定义组件渲染器
+  if (config.components && config.components[_type]) {
+    const Component = config.components[_type];
+    return <Component {...props} />;
+  }
+  
+  // 默认渲染为卡片
+  return <SmartCard 
+    data={{
+      title: _type,
+      content: <pre className="text-xs">{JSON.stringify(props, null, 2)}</pre>
+    }} 
+  />;
+}
+
+/**
+ * 数组智能渲染 - 使用上下文
+ */
+function renderArray(array, context) {
+  const { config, path } = context;
+  
+  // 空数组处理
+  if (array.length === 0) {
+    return <div className="empty-state">空数组</div>
+  }
+  
+  // 检测数组内容类型
+  const contentTypes = array.map(item => detectContentType(item));
+  const primaryType = getMostCommonType(contentTypes);
+  
+  // 如果数组元素主要是对象且具有相似结构，渲染为表格
+  if (primaryType === 'generic' && array.every(item => typeof item === 'object' && item !== null)) {
+    const hasConsistentKeys = hasSimilarStructure(array);
+    
+    if (hasConsistentKeys) {
+      // 转换为SmartLayout表格格式
+      return <SmartLayout data={{
+        items: array,
+        config: {
+          layoutType: 'table',
+          ...config.tableConfig
+        }
+      }} />;
+    }
+  }
+  
+  // 渲染为网格或列表
+  return <SmartLayout data={{
+    items: array.map((item, index) => {
+      // 为每个项目创建新的路径
+      const itemPath = [...path, index];
+      
+      // 递归渲染每个项目
+      return {
+        content: (
+          <JSONBlockContext.Provider 
+            value={{...context, path: itemPath}}
+          >
+            <JSONBlockRenderer data={item} />
+          </JSONBlockContext.Provider>
+        )
+      };
+    }),
+    config: {
+      layoutType: array.length > 3 ? 'grid' : 'list',
+      ...config.arrayConfig
+    }
+  }} />;
+}
+
+/**
+ * 对象智能渲染 - 使用上下文
+ */
+function renderObject(obj, context) {
+  const { config, path } = context;
+  const entries = Object.entries(obj).filter(([key]) => !key.startsWith('_'));
+  
+  // 提取元数据
+  const metadata = Object.entries(obj)
+    .filter(([key]) => key.startsWith('_') && key !== '_type')
+    .reduce((acc, [key, value]) => {
+      acc[key.substring(1)] = value;
+      return acc;
+    }, {});
+  
+  // 智能决策：是否应该渲染为卡片
+  if (shouldUseSmartCard(obj, entries)) {
+    return renderAsSmartCard(obj, entries, metadata, context);
+  }
+  
+  // 默认渲染为属性列表
+  return renderAsSmartLayout(obj, entries, metadata, context);
+}
+
+/**
+ * 判断对象是否应该渲染为卡片
+ */
+function shouldUseSmartCard(obj, entries) {
+  // 如果有title或name属性，倾向于使用卡片
+  const hasTitle = entries.some(([key]) => 
+    ['title', 'name', 'header', 'subject'].includes(key.toLowerCase())
+  );
+  
+  // 如果有描述类属性，倾向于使用卡片
+  const hasDescription = entries.some(([key]) => 
+    ['description', 'desc', 'summary', 'content', 'text', 'body'].includes(key.toLowerCase())
+  );
+  
+  // 如果有图片类属性，倾向于使用卡片
+  const hasImage = entries.some(([key]) => 
+    ['image', 'img', 'avatar', 'thumbnail', 'cover', 'photo'].includes(key.toLowerCase())
+  );
+  
+  return (hasTitle && (hasDescription || hasImage)) || hasImage;
+}
+
+/**
+ * 渲染为SmartCard
+ */
+function renderAsSmartCard(obj, entries, metadata, context) {
+  // 查找标题
+  const titleEntry = entries.find(([key]) => 
+    ['title', 'name', 'header', 'subject'].includes(key.toLowerCase())
+  );
+  
+  // 查找描述
+  const descEntry = entries.find(([key]) => 
+    ['description', 'desc', 'summary', 'content', 'text', 'body'].includes(key.toLowerCase())
+  );
+  
+  // 查找图片
+  const imageEntry = entries.find(([key]) => 
+    ['image', 'img', 'avatar', 'thumbnail', 'cover', 'photo'].includes(key.toLowerCase())
+  );
+  
+  // 构建卡片数据
+  const cardData = {
+    ...metadata,
+    title: titleEntry ? obj[titleEntry[0]] : undefined,
+    description: descEntry ? obj[descEntry[0]] : undefined,
+    image: imageEntry ? obj[imageEntry[0]] : undefined,
+    // 过滤掉已经使用的属性
+    content: (
+      <div className="grid grid-cols-1 gap-2">
+        {entries
+          .filter(([key]) => 
+            key !== (titleEntry?.[0]) && 
+            key !== (descEntry?.[0]) && 
+            key !== (imageEntry?.[0])
+          )
+          .map(([key, value]) => (
+            <div key={key} className="flex flex-col">
+              <span className="text-sm font-medium text-gray-500">{key}</span>
+              <JSONBlockContext.Provider 
+                value={{...context, path: [...context.path, key]}}
+              >
+                <JSONBlockRenderer data={value} />
+              </JSONBlockContext.Provider>
+            </div>
+          ))
+        }
+      </div>
+    )
+  };
+  
+  return <SmartCard data={cardData} />;
+}
+
+/**
+ * 渲染为SmartLayout
+ */
+function renderAsSmartLayout(obj, entries, metadata, context) {
+  return (
+    <SmartLayout 
+      data={{
+        ...metadata,
+        items: entries.map(([key, value]) => ({
+          title: key,
+          content: (
+            <JSONBlockContext.Provider 
+              value={{...context, path: [...context.path, key]}}
+            >
+              <JSONBlockRenderer data={value} />
+            </JSONBlockContext.Provider>
+          )
+        })),
+        config: {
+          layoutType: entries.length > 6 ? 'grid' : 'list',
+          ...context.config.objectConfig
+        }
+      }} 
+    />
+  );
+}
+
+/**
+ * 获取最常见的类型
+ */
+function getMostCommonType(types) {
+  const counts = types.reduce((acc, type) => {
+    acc[type] = (acc[type] || 0) + 1;
+    return acc;
+  }, {});
+  
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    [0][0];
+}
+
+/**
+ * 检查数组是否有相似结构
+ */
+function hasSimilarStructure(array) {
+  if (array.length < 2) return true;
+  
+  // 获取第一个对象的键
+  const firstKeys = Object.keys(array[0]).sort();
+  
+  // 检查所有对象是否有相似的键
+  return array.every(item => {
+    const keys = Object.keys(item).sort();
+    // 至少有70%的键相同
+    const commonKeys = keys.filter(key => firstKeys.includes(key));
+    return commonKeys.length >= Math.min(firstKeys.length, keys.length) * 0.7;
+  });
+}
+
+export default JSONBlock;

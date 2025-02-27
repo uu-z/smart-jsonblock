@@ -9,18 +9,31 @@ import LocationMap from './patterns/LocationMap'
 import GenericDisplay from './patterns/GenericDisplay'
 import ArrayRenderer from './patterns/ArrayRenderer'
 
-// Component registry with pattern matching functions
-const componentRegistry = [
+// Component registry - maps type names to components
+const componentMap = {
+  userCard: UserCard,
+  statsList: StatsList,
+  chart: Chart,
+  itemTable: ItemTable,
+  actionButtons: ActionButtons,
+  progressBar: ProgressBar,
+  locationMap: LocationMap,
+  array: ArrayRenderer
+}
+
+// Pattern matchers for backward compatibility and automatic detection
+const patternMatchers = [
   {
-    matcher: (key, data) => 
+    type: 'userCard',
+    matcher: (data) => 
       typeof data === 'object' && 
       data !== null && 
       'name' in data && 
-      'avatar' in data,
-    component: UserCard
+      'avatar' in data
   },
   {
-    matcher: (key, data) => 
+    type: 'statsList',
+    matcher: (data) => 
       Array.isArray(data) && 
       data.length > 0 && 
       data.every(item => 
@@ -28,20 +41,20 @@ const componentRegistry = [
         item !== null && 
         'label' in item && 
         'value' in item
-      ),
-    component: StatsList
+      )
   },
   {
-    matcher: (key, data) => 
+    type: 'chart',
+    matcher: (data) => 
       typeof data === 'object' && 
       data !== null && 
       'type' in data && 
       'data' in data && 
-      Array.isArray(data.data),
-    component: Chart
+      Array.isArray(data.data)
   },
   {
-    matcher: (key, data) => 
+    type: 'itemTable',
+    matcher: (data) => 
       Array.isArray(data) && 
       data.length > 0 && 
       data.every(item => 
@@ -49,11 +62,11 @@ const componentRegistry = [
         item !== null && 
         'id' in item && 
         'name' in item
-      ),
-    component: ItemTable
+      )
   },
   {
-    matcher: (key, data) => 
+    type: 'actionButtons',
+    matcher: (data) => 
       Array.isArray(data) && 
       data.length > 0 && 
       data.every(item => 
@@ -61,40 +74,57 @@ const componentRegistry = [
         item !== null && 
         'text' in item && 
         'type' in item
-      ),
-    component: ActionButtons
+      )
   },
   {
-    matcher: (key, data) => 
+    type: 'progressBar',
+    matcher: (data) => 
       typeof data === 'object' && 
       data !== null && 
       'current' in data && 
-      'total' in data,
-    component: ProgressBar
+      'total' in data
   },
   {
-    matcher: (key, data) => 
+    type: 'locationMap',
+    matcher: (data) => 
       typeof data === 'object' && 
       data !== null && 
       'lat' in data && 
-      'lng' in data,
-    component: LocationMap
+      'lng' in data
   },
   {
-    // Generic array handler for arrays that don't match other patterns
-    matcher: (key, data) => Array.isArray(data),
-    component: ArrayRenderer
+    type: 'array',
+    matcher: (data) => Array.isArray(data)
   }
 ]
 
-// Find the appropriate component based on data pattern
-const findComponent = (key, data) => {
-  for (const { matcher, component } of componentRegistry) {
-    if (matcher(key, data)) {
-      return component
+// Find the appropriate component based on data
+const resolveComponent = (data, key) => {
+  // Convention over configuration: Check for _type field first
+  if (data && typeof data === 'object' && !Array.isArray(data) && '_type' in data) {
+    const requestedType = data._type;
+    return componentMap[requestedType] || GenericDisplay;
+  }
+  
+  // Backward compatibility: Use pattern matching
+  for (const { type, matcher } of patternMatchers) {
+    if (matcher(data)) {
+      return componentMap[type] || GenericDisplay;
     }
   }
-  return GenericDisplay
+  
+  return GenericDisplay;
+}
+
+// Process data before passing to component
+const processComponentData = (data) => {
+  // If data has _type and a data property that's an array, use that as the main data
+  // This is useful for components that expect an array but we're using _type in an object wrapper
+  if (data && typeof data === 'object' && !Array.isArray(data) && '_type' in data && 'data' in data && Array.isArray(data.data)) {
+    return data.data;
+  }
+  
+  return data;
 }
 
 const JSONBlock = ({ data }) => {
@@ -110,10 +140,15 @@ const JSONBlock = ({ data }) => {
   return (
     <div className="json-block">
       {Object.entries(data).map(([key, value]) => {
-        const Component = findComponent(key, value)
+        // Skip rendering _type field
+        if (key === '_type') return null;
+        
+        const Component = resolveComponent(value, key);
+        const processedData = processComponentData(value);
+        
         return (
           <div key={key} className="component-wrapper">
-            <Component data={value} name={key} />
+            <Component data={processedData} name={key} />
           </div>
         )
       })}

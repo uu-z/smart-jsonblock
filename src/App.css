@@ -1,20 +1,150 @@
-.code-example {
-  background-color: #1a1a1a;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-top: 2rem;
+/* 
+ * JSONBlock - 约定大于配置的设计系统
+ * 减少复杂度和认知负担的现代CSS架构
+ */
+
+/* ===== 核心组件样式 ===== */
+.unified-layout {
+  @apply rounded-xl border border-border bg-card p-6 shadow-md transition-all duration-300 hover:shadow-lg;
 }
 
-.code-example pre {
-  background-color: #2a2a2a;
-  padding: 1rem;
-  border-radius: 4px;
-  overflow-x: auto;
+.layout-container {
+  @apply grid w-full rounded-lg p-4 relative gap-4;
 }
 
-.component-demo {
-  margin: 2rem 0;
-  padding: 1rem;
-  border: 1px dashed #666;
-  border-radius: 8px;
+.layout-title {
+  @apply text-2xl font-bold mb-2 text-card-foreground;
 }
+
+.layout-description {
+  @apply text-muted-foreground mb-4;
+}
+
+/* 统一的项目样式 - 减少重复代码 */
+.item {
+  @apply p-4 bg-card text-card-foreground rounded-lg border border-border/40 shadow-sm
+  flex flex-col justify-center items-center text-center relative
+  transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:z-10;
+}
+
+/* 内容样式 */
+.item-icon {
+  @apply text-3xl mb-3 text-primary;
+}
+
+.item-value {
+  @apply text-3xl font-bold my-2 text-primary;
+}
+
+.item-chart {
+  @apply mt-4 w-full;
+}
+
+/* 仪表盘特定样式 */
+.dashboard-header {
+  @apply p-3 bg-primary text-primary-foreground font-semibold flex justify-between items-center
+  rounded-t-lg;
+}
+
+.dashboard-content {
+  @apply p-4 flex-1;
+}
+
+.dashboard-footer {
+  @apply p-3 border-t border-border bg-muted/30 text-sm text-muted-foreground
+  rounded-b-lg;
+}
+
+/* 仪表盘项目尺寸 - 使用语义化命名 */
+.size-small { @apply col-span-1; }
+.size-medium { @apply col-span-2; }
+.size-large { @apply col-span-3; }
+.size-xlarge { @apply col-span-4; }
+
+/* 区域特定样式 */
+.area-badge {
+  @apply absolute top-2 right-2 bg-secondary/80 text-secondary-foreground
+  py-0.5 px-2 rounded text-xs font-medium backdrop-blur-sm;
+}
+
+.areas-template {
+  @apply mt-6 p-4 bg-muted/50 text-muted-foreground rounded-lg text-sm;
+}
+
+.areas-summary {
+  @apply cursor-pointer font-medium mb-2 hover:text-primary transition-colors;
+}
+
+.areas-code {
+  @apply mt-2 p-3 bg-card rounded overflow-auto font-mono text-xs;
+}
+
+.empty-state {
+  @apply p-6 text-center text-muted-foreground italic;
+}
+
+/* ===== 响应式样式 ===== */
+@media (max-width: 768px) {
+  .unified-layout {
+    @apply p-4;
+  }
+  
+  /* 强制单列布局 */
+  .layout-container {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* 重置网格区域 */
+  [class*="area-item"] {
+    grid-area: auto !important;
+    @apply mb-4;
+  }
+  
+  .layout-title {
+    @apply text-xl;
+  }
+  
+  .item-value {
+    @apply text-2xl !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .unified-layout {
+    @apply p-3 my-4 rounded-lg;
+  }
+  
+  .btn {
+    @apply px-3 py-1 text-xs h-8;
+  }
+}
+
+/* ===== 类别别名 - 保持向后兼容性 ===== */
+.grid-item, .area-item, .dashboard-item {
+  @apply item;
+}
+
+/* 简化的动画类 */
+.animate-hover {
+  @apply transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:z-10;
+}
+
+/* 美化的卡片效果 */
+.card-glass {
+  @apply bg-card/80 backdrop-blur-sm border-border/30;
+}
+
+/* 渐变背景效果 */
+.bg-gradient-primary {
+  @apply bg-gradient-to-br from-primary/80 to-primary;
+}
+
+.bg-gradient-secondary {
+  @apply bg-gradient-to-br from-secondary/80 to-secondary;
+}
+
+/* 添加微妙的纹理背景 */
+.bg-texture {
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='currentColor' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+

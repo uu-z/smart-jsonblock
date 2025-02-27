@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -16,6 +17,20 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
     "vite": "^4.4.5"
-  }
+  },
+  "description": "Smart JSON Component Renderer with Tailwind CSS styling",
+  "main": "index.js",
+  "keywords": [
+    "react",
+    "json",
+    "renderer",
+    "tailwindcss",
+    "shadcn"
+  ],
+  "author": "uuz",
+  "license": "ISC"
 }

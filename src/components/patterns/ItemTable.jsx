@@ -31,7 +31,9 @@ const ItemTable = ({ data, name }) => {
                   <td key={key} style={{ padding: '0.5rem', borderBottom: '1px solid #444' }}>
                     {typeof item[key] === 'boolean' 
                       ? item[key] ? '✓' : '✗'
-                      : item[key]}
+                      : typeof item[key] === 'object' && item[key] !== null
+                        ? JSON.stringify(item[key]).substring(0, 30) + (JSON.stringify(item[key]).length > 30 ? '...' : '')
+                        : item[key]}
                   </td>
                 ))}
               </tr>

@@ -18,7 +18,7 @@ const componentMap = {
   actionButtons: ActionButtons,
   progressBar: ProgressBar,
   locationMap: LocationMap,
-  array: ArrayRenderer
+  array: ArrayRenderer  // This is used for explicit _type: "array" declarations
 }
 
 // Pattern matchers for backward compatibility and automatic detection
@@ -117,8 +117,13 @@ const resolveComponent = (data, key) => {
 }
 
 // Process data before passing to component
-const processComponentData = (data) => {
-  // If data has _type and a data property that's an array, use that as the main data
+const processComponentData = (data, componentType) => {
+  // For chart components, we need to pass the entire object
+  if (componentType === 'chart') {
+    return data;
+  }
+  
+  // For other components that expect an array, extract the data array
   // This is useful for components that expect an array but we're using _type in an object wrapper
   if (data && typeof data === 'object' && !Array.isArray(data) && '_type' in data && 'data' in data && Array.isArray(data.data)) {
     return data.data;
@@ -144,7 +149,22 @@ const JSONBlock = ({ data }) => {
         if (key === '_type') return null;
         
         const Component = resolveComponent(value, key);
-        const processedData = processComponentData(value);
+        
+        // Determine component type
+        let componentType = null;
+        if (value && typeof value === 'object' && !Array.isArray(value) && '_type' in value) {
+          componentType = value._type;
+        } else {
+          // Try to find matching pattern
+          for (const { type, matcher } of patternMatchers) {
+            if (matcher(value)) {
+              componentType = type;
+              break;
+            }
+          }
+        }
+        
+        const processedData = processComponentData(value, componentType);
         
         return (
           <div key={key} className="component-wrapper">

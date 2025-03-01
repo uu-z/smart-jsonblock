@@ -1,7 +1,7 @@
 # JSONBlock
 
 A smart, convention-over-configuration JSON renderer for React applications built with TypeScript and Tailwind CSS.
-
+![JSON Block](assets/image/image.png)
 ## 🌟 Features
 
 - **Smart Component Detection**: Automatically detects and renders appropriate components based on data structure
